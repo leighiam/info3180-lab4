@@ -2,6 +2,7 @@
 
 {% block main %}
 <form class="form-login" method="post">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
   <h2>Please sign in</h2>
   {% if error %}
     <div class="alert alert-danger">

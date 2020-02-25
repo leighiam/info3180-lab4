@@ -8,6 +8,8 @@ import os
 from app import app
 from flask import render_template, request, redirect, url_for, flash, session, abort
 from werkzeug.utils import secure_filename
+from .forms import UploadForm
+from werkzeug.datastructures import CombinedMultiDict
 
 
 ###
@@ -32,11 +34,14 @@ def upload():
         abort(401)
 
     # Instantiate your form class
-
+    form = UploadForm(CombinedMultiDict((request.files, request.form)))
     # Validate file upload on submit
     if request.method == 'POST':
         # Get file data and save to your uploads folder
-
+        f = form.upload.data
+        filename = secure_filename(f.filename)
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'] , filename
+        ))
         flash('File Saved', 'success')
         return redirect(url_for('home'))
 
@@ -63,6 +68,18 @@ def logout():
     flash('You were logged out', 'success')
     return redirect(url_for('home'))
 
+
+@app.route('/files')
+def files():
+    return render_template('files.html')
+
+
+def get_uploaded_images():
+    rootdir = os.getcwd() 
+    print rootdir 
+    for subdir, dirs, files in os.walk(rootdir + '/static/uploads'):
+        for file in files:
+            print os.path.join(subdir, file)
 
 ###
 # The functions below should be applicable to all Flask apps.
