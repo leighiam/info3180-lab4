@@ -25,7 +25,7 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
+    return render_template('about.html', name="Ashleigh Barker")
 
 
 @app.route('/upload', methods=['POST', 'GET'])
@@ -34,18 +34,19 @@ def upload():
         abort(401)
 
     # Instantiate your form class
+    #form = UploadForm
     form = UploadForm(CombinedMultiDict((request.files, request.form)))
     # Validate file upload on submit
-    if request.method == 'POST':
+    if request.method == 'POST' and form.validate_on_submit():
         # Get file data and save to your uploads folder
         f = form.upload.data
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'] , filename
         ))
-        flash('File Saved', 'success')
+        flash('File Saved', '/')
         return redirect(url_for('home'))
 
-    return render_template('upload.html')
+    return render_template('upload.html', form=form)
 
 
 @app.route('/login', methods=['POST', 'GET'])
